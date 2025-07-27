@@ -9,6 +9,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import { PlusIcon } from 'lucide-react';
 
 export default async function Home() {
   return (
@@ -17,7 +18,9 @@ export default async function Home() {
       <div className="flex justify-end">
         <Dialog>
           <DialogTrigger asChild>
-            <Button>Create Task</Button>
+            <Button>
+              Create Task <PlusIcon />
+            </Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>

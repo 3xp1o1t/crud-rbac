@@ -8,6 +8,9 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { getTasks } from '@/server/tasks';
+import { PencilIcon } from 'lucide-react';
+import DeleteTaskButton from './delete-task-button';
+import { Button } from './ui/button';
 
 export const TaskTable = async () => {
   const tasks = await getTasks();
@@ -21,6 +24,7 @@ export const TaskTable = async () => {
           <TableHead>Status</TableHead>
           <TableHead>Created At</TableHead>
           <TableHead>Updated At</TableHead>
+          <TableHead>Actions</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -34,6 +38,12 @@ export const TaskTable = async () => {
             </TableCell>
             <TableCell>
               {new Date(task.updatedAt).toLocaleDateString()}
+            </TableCell>
+            <TableCell>
+              <Button variant="ghost" size="sm">
+                <PencilIcon />
+              </Button>
+              <DeleteTaskButton taskId={task.id} />
             </TableCell>
           </TableRow>
         ))}
