@@ -1,0 +1,18 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../lib/rbac-db/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Task {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  status      String   @default("pending")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
