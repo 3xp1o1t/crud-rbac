@@ -14,7 +14,8 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { createTask } from '@/server/tasks';
+import { Task } from '@/lib/rbac-db/prisma';
+import { createTask, updateTask } from '@/server/tasks';
 import { Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -25,31 +26,46 @@ const formSchema = z.object({
   description: z.string().max(200).optional(),
 });
 
-const TaskForm = () => {
+interface TaskFormProps {
+  task?: Task;
+}
+
+const TaskForm = ({ task }: TaskFormProps) => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      title: '',
-      description: '',
+      title: task?.title || '',
+      description: task?.description || '',
     },
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
     try {
-      await createTask({
-        ...values,
-        description: values.description ?? null,
-      });
+      if (task) {
+        await updateTask({
+          ...values,
+          id: task.id,
+          status: 'pending',
+          description: values.description ?? null,
+        });
+      } else {
+        await createTask({
+          ...values,
+          description: values.description ?? null,
+        });
+      }
       form.reset();
-      toast.success('Task created successfully!');
+      toast.success(`Task ${task ? 'updated' : 'added'} successfully!`);
       setIsLoading(false);
       router.refresh();
     } catch (error) {
       console.error('Error creating task:', error);
-      toast.error('Failed to create task. Please try again.');
+      toast.error(
+        `Failed to ${task ? 'update' : 'add'} task. Please try again.`,
+      );
     } finally {
       setIsLoading(false);
     }
@@ -87,7 +103,7 @@ const TaskForm = () => {
           {isLoading ? (
             <Loader2 className="size-4 animate-spin" />
           ) : (
-            'Create Task'
+            `${task ? 'Update' : 'Create'} Task`
           )}
         </Button>
       </form>

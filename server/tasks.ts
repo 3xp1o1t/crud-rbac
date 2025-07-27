@@ -29,12 +29,13 @@ export async function createTask(
 }
 
 export async function updateTask(
-  id: string,
-  taskData: Omit<Task, 'id' | 'createdAt' | 'updatedAt'>,
+  taskData: Omit<Task, 'createdAt' | 'updatedAt'>,
 ) {
   try {
     return await prismaRbac.task.update({
-      where: { id },
+      where: {
+        id: taskData.id,
+      },
       data: taskData,
     });
   } catch (error) {

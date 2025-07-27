@@ -1,4 +1,10 @@
 import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import {
   Table,
   TableBody,
   TableCaption,
@@ -8,8 +14,10 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { getTasks } from '@/server/tasks';
+import { DialogTitle } from '@radix-ui/react-dialog';
 import { PencilIcon } from 'lucide-react';
 import DeleteTaskButton from './delete-task-button';
+import TaskForm from './forms/tasks-form';
 import { Button } from './ui/button';
 
 export const TaskTable = async () => {
@@ -31,7 +39,7 @@ export const TaskTable = async () => {
         {tasks.map((task) => (
           <TableRow key={task.id}>
             <TableCell className="font-medium">{task.title}</TableCell>
-            <TableCell>{task.description || 'No description'}</TableCell>
+            <TableCell>{task.description || ''}</TableCell>
             <TableCell>{task.status}</TableCell>
             <TableCell>
               {new Date(task.createdAt).toLocaleDateString()}
@@ -40,9 +48,19 @@ export const TaskTable = async () => {
               {new Date(task.updatedAt).toLocaleDateString()}
             </TableCell>
             <TableCell>
-              <Button variant="ghost" size="sm">
-                <PencilIcon />
-              </Button>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button variant="ghost" size="sm">
+                    <PencilIcon />
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogTitle>Edit Task</DialogTitle>
+                  <DialogHeader>
+                    <TaskForm task={task} />
+                  </DialogHeader>
+                </DialogContent>
+              </Dialog>
               <DeleteTaskButton taskId={task.id} />
             </TableCell>
           </TableRow>
